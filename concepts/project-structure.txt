@@ -1,0 +1,29 @@
+berkeley-dance-hub/
+├── src/
+│   ├── app/                      # Next.js 13+ app directory
+│   │   ├── (auth)/              # Authentication-required routes
+│   │   │   ├── feed/
+│   │   │   ├── events/
+│   │   │   ├── network/
+│   │   │   ├── organizations/
+│   │   │   └── profile/
+│   │   ├── api/                 # API routes
+│   │   └── layout.tsx           # Root layout
+│   ├── components/              # Reusable components
+│   │   ├── layout/             # Layout components
+│   │   │   ├── Header.tsx
+│   │   │   ├── Navigation.tsx
+│   │   │   └── Footer.tsx
+│   │   ├── feed/               # Feed-related components
+│   │   ├── events/             # Event-related components
+│   │   ├── organizations/      # Organization-related components
+│   │   └── shared/             # Shared UI components
+│   ├── lib/                    # Utility functions and shared logic
+│   │   ├── db/                 # Database utilities
+│   │   ├── auth/               # Authentication utilities
+│   │   └── api/                # API utilities
+│   ├── types/                  # TypeScript type definitions
+│   └── styles/                 # Global styles
+├── public/                     # Static files
+├── prisma/                     # Database schema and migrations
+└── package.json

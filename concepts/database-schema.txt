@@ -1,0 +1,140 @@
+// This is your Prisma schema file
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  bio           String?
+  avatar        String?
+  danceStyles   String[]
+  experience    Int?      // Years of experience
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  posts         Post[]
+  comments      Comment[]
+  organizations OrganizationMember[]
+  events        EventAttendee[]
+  media         Media[]
+}
+
+model Organization {
+  id          String    @id @default(cuid())
+  name        String
+  bio         String?
+  logo        String?
+  website     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  members     OrganizationMember[]
+  events      Event[]
+  posts       Post[]
+}
+
+model OrganizationMember {
+  id            String       @id @default(cuid())
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String
+  user          User         @relation(fields: [userId], references: [id])
+  userId        String
+  role          String       // e.g., "ADMIN", "MEMBER"
+  joinedAt      DateTime     @default(now())
+
+  @@unique([orgId, userId])
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  location    String
+  startTime   DateTime
+  endTime     DateTime
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+  orgId        String
+  attendees    EventAttendee[]
+}
+
+model EventAttendee {
+  id        String   @id @default(cuid())
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  status    String   // e.g., "GOING", "INTERESTED", "NOT_GOING"
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  // Relations
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  org       Organization? @relation(fields: [orgId], references: [id])
+  orgId     String?
+  media     Media[]
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+
+  @@unique([userId, postId])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  type      String   // e.g., "IMAGE", "VIDEO"
+  url       String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?
+}
