@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[MOCKUP/NON-FUNCTIONAL DEMO] Berkeley Dance App</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function App() {
+            const [currentPage, setCurrentPage] = React.useState('home');
+            const [selectedOrg, setSelectedOrg] = React.useState(null);
+
+            // Sample Data
+            const organizations = [
+                {
+                    id: 1,
+                    name: "XFA Dance",
+                    bio: "Largest dance organization at UC Berkeley",
+                    members: 24,
+                    logo: "https://picsum.photos/100/100?random=10",
+                    events: [1, 2],
+                    website: "#"
+                },
+                {
+                    id: 2,
+                    name: "COSMOS @ Kal",
+                    bio: "C-Pop Dance Team at UC Berkeley",
+                    members: 42,
+                    logo: "https://picsum.photos/100/100?random=11",
+                    events: [3],
+                    website: "#"
+                }
+            ];
+
+            const events = [
+                { 
+                    id: 1,
+                    title: "COSMOS @ Kal - Session A Show & Tell", 
+                    orgId: 1,
+                    date: "March 14", 
+                    location: "Lower Sproul",
+                    image: "https://picsum.photos/400/300?random=1"
+                },
+                { 
+                    id: 2,
+                    title: "[N] Novement Open-Style Workshop", 
+                    orgId: 1,
+                    date: "March 18", 
+                    location: "Upper Sproul",
+                    image: "https://picsum.photos/400/300?random=2"
+                },
+                { 
+                    id: 3,
+                    title: "Stain Macks - Audition Teach Night #1", 
+                    orgId: 2,
+                    date: "March 21", 
+                    location: "Paas Havillion",
+                    image: "https://picsum.photos/400/300?random=3"
+                }
+            ];
+
+            const users = [
+                { 
+                    name: "Joe M.", 
+                    style: "Hip-Hop", 
+                    team: "XFA Dance (Spring 2024)",
+                    orgs: [1],
+                    media: Array(6).fill().map((_,i) => `https://picsum.photos/150/150?random=${i+30}`)
+                },
+                { 
+                    name: "Zach Chung", 
+                    style: "Open-Style", 
+                    team: "Stain Macks - Beta Class (Fall 2021)",
+                    orgs: [2]
+                },
+                { 
+                    name: "Dhies Naughts", 
+                    style: "Popping", 
+                    team: "Fake eLements [FL] (Spring 2023)",
+                    orgs: [1,2]
+                }
+            ];
+
+            const posts = [
+                {
+                    user: "XFA Dance",
+                    content: "Just dropped our new choreography video! Check it out 👇",
+                    media: "https://picsum.photos/600/400?random=4",
+                    likes: 89,
+                    comments: 15
+                },
+                {
+                    user: "COSMOS @ Kal",
+                    content: "Open auditions for our spring showcase start next Monday!",
+                    media: "https://picsum.photos/600/400?random=5",
+                    likes: 142,
+                    comments: 27
+                }
+            ];
+
+            // Organization Page Component
+            function OrganizationPage({ org }) {
+                const orgEvents = events.filter(e => e.orgId === org.id);
+                const orgMembers = users.filter(u => u.orgs.includes(org.id));
+
+                return (
+                    <div className="space-y-6">
+                        {/* Organization Profile */}
+                        <div className="bg-white rounded-xl p-4 shadow-lg">
+                            <div className="flex items-center gap-4">
+                                <img src={org.logo} 
+                                     className="w-24 h-24 rounded-full object-cover" 
+                                     alt="Organization logo" />
+                                <div>
+                                    <h2 className="text-2xl font-bold">{org.name}</h2>
+                                    <p className="text-gray-600 mb-2">{org.bio}</p>
+                                    <div className="flex gap-2">
+                                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                            {org.members} Members
+                                        </span>
+                                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-full text-sm">
+                                            Join
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Organization Members */}
+                        <div className="bg-white rounded-xl p-4 shadow-lg">
+                            <h3 className="text-xl font-bold mb-4">Members</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                {orgMembers.map((member, index) => (
+                                    <div key={index} className="flex items-center gap-3">
+                                        <img src={`https://picsum.photos/50/50?random=${index + 20}`} 
+                                             className="w-10 h-10 rounded-full object-cover" 
+                                             alt="Member" />
+                                        <div>
+                                            <h4 className="font-semibold">{member.name}</h4>
+                                            <p className="text-sm text-gray-600">
+                                                {member.orgs.length} Organizations
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Organization Events */}
+                        <div className="bg-white rounded-xl p-4 shadow-lg">
+                            <h3 className="text-xl font-bold mb-4">Our Events</h3>
+                            <div className="space-y-4">
+                                {orgEvents.map(event => (
+                                    <div key={event.id} className="border p-4 rounded-lg">
+                                        <h4 className="font-bold">{event.title}</h4>
+                                        <p className="text-sm text-gray-600">
+                                            {event.date} • {event.location}
+                                        </p>
+                                        <button className="mt-2 text-sm bg-blue-500 text-white px-4 py-2 rounded-lg">
+                                            RSVP
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-100 pb-16">
+                    {/* Header */}
+                    <header className="bg-blue-900 text-white">
+                        <div className="max-w-4xl mx-auto p-4">
+                            <h1 className="text-xl font-bold">Berkeley Dance App</h1>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="p-4">
+                        <div className="max-w-4xl mx-auto">
+                            {/* Home Page */}
+                            {currentPage === 'home' && (
+                                <div className="space-y-6">
+                                    {/* Profile Card */}
+                                    <div className="bg-white rounded-xl p-4 shadow-lg">
+                                        <div className="flex items-center gap-4">
+                                            <img src="https://picsum.photos/100/100?random=6" 
+                                                 className="w-16 h-16 rounded-full object-cover" 
+                                                 alt="Profile" />
+                                            <div>
+                                                <h2 className="font-bold text-lg">Joe M.</h2>
+                                                <p className="text-gray-600">Hip-Hop • [N] Novement Open-Style</p>
+                                                <div className="flex gap-2 mt-2">
+                                                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                                                        Choreographer
+                                                    </span>
+                                                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                                                        UC Berkeley '25
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Create Post */}
+                                    <div className="bg-white rounded-xl p-4 shadow-lg">
+                                        <textarea 
+                                            className="w-full p-3 border rounded-lg mb-2 focus:ring-2 focus:ring-blue-400"
+                                            placeholder="What's moving in your dance world today?"
+                                            rows="3"></textarea>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex gap-3 text-blue-500">
+                                                <button className="hover:text-blue-600">
+                                                    <i className="fas fa-image text-lg"></i>
+                                                </button>
+                                                <button className="hover:text-blue-600">
+                                                    <i className="fas fa-video text-lg"></i>
+                                                </button>
+                                            </div>
+                                            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                                Post
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Feed */}
+                                    <div className="space-y-6">
+                                        {posts.map((post, index) => (
+                                            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                                <div className="p-4">
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <img src="https://picsum.photos/50/50?random=7" 
+                                                             className="w-10 h-10 rounded-full object-cover" 
+                                                             alt="User" />
+                                                        <div>
+                                                            <h3 className="font-semibold">{post.user}</h3>
+                                                            <p className="text-sm text-gray-500">2 hours ago</p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="mb-4">{post.content}</p>
+                                                    <img src={post.media} 
+                                                         className="w-full rounded-lg mb-4" 
+                                                         alt="Post media" />
+                                                    <div className="flex gap-6 text-gray-500">
+                                                        <button className="hover:text-blue-500">
+                                                            <i className="fas fa-heart mr-2"></i>{post.likes}
+                                                        </button>
+                                                        <button className="hover:text-blue-500">
+                                                            <i className="fas fa-comment mr-2"></i>{post.comments}
+                                                        </button>
+                                                        <button className="hover:text-blue-500">
+                                                            <i className="fas fa-share"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Events Page */}
+                            {currentPage === 'events' && (
+                                <div className="space-y-6">
+                                    <h2 className="text-2xl font-bold text-gray-800">Upcoming Events</h2>
+                                    {events.map((event, index) => (
+                                        <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                            <img src={event.image} 
+                                                 className="w-full h-48 object-cover" 
+                                                 alt="Event" />
+                                            <div className="p-4">
+                                                <h3 className="text-xl font-bold mb-2">{event.title}</h3>
+                                                <div className="flex items-center gap-2 text-gray-600 mb-3">
+                                                    <i className="fas fa-calendar-day"></i>
+                                                    <span>{event.date}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-gray-600 mb-4">
+                                                    <i className="fas fa-map-marker-alt"></i>
+                                                    <span>{event.location}</span>
+                                                </div>
+                                                <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                                                    RSVP Now
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Network Page */}
+                            {currentPage === 'network' && (
+                                <div className="space-y-6">
+                                    <h2 className="text-2xl font-bold text-gray-800">Connect with Dancers</h2>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {users.map((user, index) => (
+                                            <div key={index} className="bg-white rounded-xl p-4 shadow-lg">
+                                                <div className="flex items-center gap-4">
+                                                    <img src={`https://picsum.photos/80/80?random=${index + 10}`} 
+                                                         className="w-14 h-14 rounded-full object-cover" 
+                                                         alt="User" />
+                                                    <div className="flex-1">
+                                                        <h3 className="font-semibold text-lg">{user.name}</h3>
+                                                        <p className="text-gray-600">{user.style}</p>
+                                                        <p className="text-sm text-blue-600">{user.team}</p>
+                                                    </div>
+                                                </div>
+                                                <button className="mt-3 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm">
+                                                    Connect
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Organizations Page */}
+                            {currentPage === 'orgs' && !selectedOrg && (
+                                <div className="space-y-6">
+                                    <h2 className="text-2xl font-bold text-gray-800">Organizations</h2>
+                                    <div className="space-y-4">
+                                        {organizations.map(org => (
+                                            <div key={org.id} 
+                                                 className="bg-white rounded-xl p-4 shadow-lg cursor-pointer hover:bg-gray-50"
+                                                 onClick={() => setSelectedOrg(org)}>
+                                                <div className="flex items-center gap-4">
+                                                    <img src={org.logo} 
+                                                         className="w-16 h-16 rounded-full object-cover" 
+                                                         alt="Org logo" />
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold">{org.name}</h3>
+                                                        <p className="text-gray-600 text-sm">{org.bio}</p>
+                                                        <div className="flex gap-2 mt-2">
+                                                            <span className="text-sm text-blue-600">
+                                                                {org.members} members
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Single Organization Page */}
+                            {currentPage === 'orgs' && selectedOrg && (
+                                <OrganizationPage org={selectedOrg} />
+                            )}
+
+                            {/* Profile Page */}
+                            {currentPage === 'profile' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl p-4 shadow-lg">
+                                        <div className="flex items-center gap-4">
+                                            <img src="https://picsum.photos/150/150?random=8" 
+                                                 className="w-24 h-24 rounded-full object-cover" 
+                                                 alt="Profile" />
+                                            <div>
+                                                <h2 className="text-2xl font-bold">Joe M.</h2>
+                                                <p className="text-gray-600">Dancer & Choreographer</p>
+                                                <div className="flex gap-2 mt-3">
+                                                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                                        5+ Years Dancing
+                                                    </span>
+                                                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                                        [N] Novement Open-Style (2021-2024)
+                                                    </span>
+                                                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                                        FartFX Director (Sp'24)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl p-4 shadow-lg">
+                                        <h3 className="text-xl font-bold mb-4">Performance Highlights</h3>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {users[0].media.map((img, index) => (
+                                                <div key={index} className="aspect-square relative group">
+                                                    <img src={img} 
+                                                         className="w-full h-full rounded-lg object-cover" 
+                                                         alt="Performance" />
+                                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center">
+                                                        <button className="opacity-0 group-hover:opacity-100 text-white">
+                                                            <i className="fas fa-play text-3xl"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </main>
+
+                    {/* Navigation Bar */}
+                    <nav className="fixed bottom-0 w-full bg-white border-t shadow-inner">
+                        <div className="max-w-4xl mx-auto w-full">
+                            <div className="flex justify-around p-2">
+                                {['home', 'events', 'network', 'orgs', 'profile'].map((page) => (
+                                    <button 
+                                        key={page}
+                                        onClick={() => {
+                                            setCurrentPage(page);
+                                            if (page !== 'orgs') setSelectedOrg(null);
+                                        }}
+                                        className={`p-3 rounded-full transition-colors ${
+                                            currentPage === page 
+                                            ? 'text-blue-500 bg-blue-50' 
+                                            : 'text-gray-500 hover:bg-gray-100'
+                                        }`}
+                                    >
+                                    <i className={`fas fa-${{
+                                    home: 'home',
+                                    events: 'calendar',
+                                    network: 'users',
+                                    orgs: 'users-group', // 👈 This is the organization icon
+                                    profile: 'user'
+                                    }[page]} text-xl`}></i>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
