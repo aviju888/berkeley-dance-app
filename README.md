@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Berkeley Dance Social Media App
+
+A social media platform for the Berkeley dance community, built with Next.js and Supabase.
+
+## Features
+
+- User authentication with email/password
+- User profiles with dance styles, team affiliations, and tags
+- Posts with media support
+- Events with RSVP functionality
+- Organizations with membership management
+- Responsive design for mobile and desktop
+
+## Tech Stack
+
+- **Frontend**: React, Next.js, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Form Handling**: React Hook Form, Zod
+- **Icons**: React Icons
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18+ and npm
+- Supabase account
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/berkeley-dance.git
+   cd berkeley-dance
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Create a `.env.local` file in the root directory with your Supabase credentials:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Set up your Supabase database with the following tables:
+   - profiles
+   - organizations
+   - organization_members
+   - events
+   - event_attendees
+   - posts
+   - post_likes
+   - comments
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## Database Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### profiles
+- id (UUID, primary key)
+- user_id (UUID, foreign key to auth.users)
+- username (string)
+- full_name (string)
+- profile_image (string, nullable)
+- dance_style (string, nullable)
+- team_affiliation (string, nullable)
+- tags (string array, nullable)
+- bio (text, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### organizations
+- id (UUID, primary key)
+- name (string)
+- description (text)
+- logo (string, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+### organization_members
+- organization_id (UUID, foreign key to organizations)
+- user_id (UUID, foreign key to auth.users)
+- role (enum: 'admin', 'member')
+- created_at (timestamp)
+
+### events
+- id (UUID, primary key)
+- title (string)
+- description (text)
+- date (timestamp)
+- location (string)
+- organization_id (UUID, foreign key to organizations, nullable)
+- image (string, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+### event_attendees
+- event_id (UUID, foreign key to events)
+- user_id (UUID, foreign key to auth.users)
+- status (enum: 'going', 'interested', 'not_going')
+- created_at (timestamp)
+
+### posts
+- id (UUID, primary key)
+- content (text)
+- author_id (UUID, foreign key to auth.users)
+- media (string array, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+### post_likes
+- post_id (UUID, foreign key to posts)
+- user_id (UUID, foreign key to auth.users)
+- created_at (timestamp)
+
+### comments
+- id (UUID, primary key)
+- content (text)
+- author_id (UUID, foreign key to auth.users)
+- post_id (UUID, foreign key to posts)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+## License
+
+MIT
